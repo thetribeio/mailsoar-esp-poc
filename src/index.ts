@@ -1,5 +1,15 @@
 import { config as loadEnv } from "dotenv";
 
+const fetchActiveCampaignApi = async <T>(path: string): Promise<T> => {
+    const response = await fetch(`${process.env.ACTIVE_CAMPAIGN_API_URL}/api/3/${path}`, {
+        headers: [
+            ["Api-Token", process.env.ACTIVE_CAMPAIGN_API_KEY!],
+        ]
+    });
+
+    return response.json();
+};
+
 type Message = {
     id: string,
     name: string,
@@ -11,13 +21,7 @@ type MessagesApiResponse = {
 };
 
 const listAllMessages = async (): Promise<Message[]> => {
-    const response = await fetch(`${process.env.ACTIVE_CAMPAIGN_API_URL}/api/3/messages`, {
-        headers: [
-            ["Api-Token", process.env.ACTIVE_CAMPAIGN_API_KEY!],
-        ]
-    });
-
-    const { messages }: MessagesApiResponse = await response.json();
+    const { messages }: MessagesApiResponse = await fetchActiveCampaignApi("messages");
 
     return messages;
 }
@@ -32,16 +36,6 @@ type MessageDetails = {
 
 type GetMessageApiResponse = {
     message: MessageDetails,
-};
-
-const fetchActiveCampaignApi = async <T>(path: string): Promise<T> => {
-    const response = await fetch(`${process.env.ACTIVE_CAMPAIGN_API_URL}/api/3/${path}`, {
-        headers: [
-            ["Api-Token", process.env.ACTIVE_CAMPAIGN_API_KEY!],
-        ]
-    });
-
-    return response.json();
 };
 
 const getMessageDetails = async (messageId: string): Promise<GetMessageApiResponse> => {
